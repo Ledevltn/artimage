@@ -1,0 +1,75 @@
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    min-height: 120px;
+    display: flex;
+    align-items: flex-start;
+    /* Align closer to top */
+    justify-content: center;
+    padding: 30px 20px 0 20px;
+    /* Top padding for positioning */
+    background: transparent;
+    /* Totally transparent */
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    /* No global blur */
+    z-index: 1000;
+    pointer-events: none;
+    /* Let clicks pass through the empty sides */
+}
+
+.search-wrapper {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    pointer-events: auto;
+    /* Re-enable clicks on the search bar */
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    transition: color 0.3s;
+    z-index: 2;
+}
+
+.search-input {
+    width: 100%;
+    padding: 16px 20px 16px 56px;
+    font-size: 1.1rem;
+
+    /* Glassmorphism */
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    color: var(--text-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    /* Strong shadow for float effect */
+}
+
+.search-input:focus {
+    background: rgba(50, 50, 50, 0.6);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+    /* Slight lift */
+}
+
+.search-input:focus+.search-icon {
+    color: var(--text-primary);
+}
