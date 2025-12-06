@@ -137,15 +137,35 @@ function App() {
     <div className="app">
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <main>
-        <ImageGrid
-          images={images}
-          onImageClick={handleImageClick}
-        />
+        {/* Only show grid if we have images OR if we are not in a loading/error state (to show 'empty' message) */}
+        {(images.length > 0 || (!loading && !error)) && (
+          <ImageGrid
+            images={images}
+            onImageClick={handleImageClick}
+          />
+        )}
 
         {/* Loading / Sentinel */}
         <div ref={observerTarget} style={{ height: '100px', margin: '20px 0', textAlign: 'center', color: '#666' }}>
           {loading && <p>Loading masterpiece collection...</p>}
-          {error && <p style={{ color: '#ff6b6b' }}>{error}</p>}
+          {error && (
+            <div style={{ padding: '20px' }}>
+              <p style={{ color: '#ff6b6b', marginBottom: '10px' }}>{error}</p>
+              <button
+                onClick={() => fetchArtworks(page, debouncedSearch)}
+                style={{
+                  padding: '8px 16px',
+                  background: 'rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  color: 'white',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Try Again
+              </button>
+            </div>
+          )}
           {!hasMore && !loading && !error && <p>End of collection.</p>}
         </div>
       </main>
