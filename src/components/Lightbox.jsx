@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { X, ZoomIn, ZoomOut, Maximize } from 'lucide-react';
 import './Lightbox.css';
 
 const Lightbox = ({ image, onClose }) => {
@@ -24,30 +26,52 @@ const Lightbox = ({ image, onClose }) => {
         return () => {
             window.removeEventListener('keydown', handleEsc);
             document.body.style.overflow = 'auto';
-            // Cleanup image object? JS GC handles it usually.
         };
     }, [image, onClose]);
 
     if (!image) return null;
 
     return (
-        <div className="lightbox-overlay" onClick={onClose}>
-            <div className="lightbox-content">
-                <img
-                    src={currentSrc}
-                    alt={image.title}
-                    className={`lightbox-image ${isHighResLoaded ? 'high-res' : 'low-res'}`}
-                    onClick={onClose} // Clicking image closes it
-                    style={{ cursor: 'zoom-out' }}
-                />
-                <div className="lightbox-details" onClick={(e) => e.stopPropagation()}>
-                    <h2>
-                        {image.title}
-                        {image.date && <span style={{ margin: '0 10px', color: '#fff', opacity: 0.8 }}>{image.date}</span>}
-                        <span style={{ margin: '0 10px', opacity: 0.5 }}>—</span>
-                        <span style={{ fontWeight: 300, color: '#ddd' }}>{image.artist}</span>
-                    </h2>
-                </div>
+        <div className="lightbox-overlay">
+            <div className="lightbox-controls">
+                <button onClick={onClose} className="close-btn" aria-label="Close">
+                    <X size={32} />
+                </button>
+            </div>
+
+            <div className="lightbox-content-wrapper">
+                <TransformWrapper
+                    initialScale={1}
+                    minScale={0.5}
+                    maxScale={4}
+                    centerOnInit
+                >
+                    {({ zoomIn, zoomOut, resetTransform }) => (
+                        <>
+                            <div className="zoom-controls">
+                                <button onClick={() => zoomIn()}><ZoomIn size={24} /></button>
+                                <button onClick={() => zoomOut()}><ZoomOut size={24} /></button>
+                                <button onClick={() => resetTransform()}><Maximize size={24} /></button>
+                            </div>
+                            <TransformComponent wrapperClass="transform-wrapper" contentClass="transform-content">
+                                <img
+                                    src={currentSrc}
+                                    alt={image.title}
+                                    className={`lightbox-image ${isHighResLoaded ? 'high-res' : 'low-res'}`}
+                                />
+                            </TransformComponent>
+                        </>
+                    )}
+                </TransformWrapper>
+            </div>
+
+            <div className="lightbox-details" onClick={(e) => e.stopPropagation()}>
+                <h2>
+                    {image.title}
+                    {image.date && <span style={{ margin: '0 10px', color: '#fff', opacity: 0.8 }}>{image.date}</span>}
+                    <span style={{ margin: '0 10px', opacity: 0.5 }}>—</span>
+                    <span style={{ fontWeight: 300, color: '#ddd' }}>{image.artist}</span>
+                </h2>
             </div>
         </div>
     );

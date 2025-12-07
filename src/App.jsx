@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Header from './components/Header';
 import ImageGrid from './components/ImageGrid';
 import Lightbox from './components/Lightbox';
+import ScrollToTop from './components/ScrollToTop';
 
 // Cleveland Museum of Art API
 const API_BASE_URL = "https://openaccess-api.clevelandart.org/api/artworks/";
@@ -9,6 +10,7 @@ const API_BASE_URL = "https://openaccess-api.clevelandart.org/api/artworks/";
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [filterType, setFilterType] = useState('');
 
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
@@ -23,17 +25,27 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
-      setPage(1);
-      setImages([]);
-      setHasMore(true);
-      setError(null);
+      // We don't reset here anymore, we reset in the effect that watches debouncedSearch & filterType
     }, 300);
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  // Reset and Refetch when search OR filter changes
+  useEffect(() => {
+    setPage(1);
+    setImages([]);
+    setHasMore(true);
+    setError(null);
+    // The actual fetch will be triggered by variable change in the main fetch effect
+    // or we could call fetch directly here?
+    // Better pattern: dependency on query/filter in a separate "reset" effect?
+    // Actually, simplest is:
+    // When debouncedSearch or filterType changes, we reset images and set page to 1.
+  }, [debouncedSearch, filterType]);
+
   // Fetch Logic
-  const fetchArtworks = useCallback(async (pageNum, query) => {
+  const fetchArtworks = useCallback(async (pageNum, query, type) => {
     setLoading(true);
     setError(null);
 
@@ -47,7 +59,7 @@ function App() {
 
       let url = `${API_BASE_URL}?has_image=1&limit=${limit}&skip=${skip}`;
       if (q) url += `&q=${encodeURIComponent(q)}`;
-      // Removed default 'painting' query to vastly improve initial load speed (3.6s -> 0.5s)
+      if (type) url += `&type=${encodeURIComponent(type)}`;
 
       const response = await fetch(url, { signal: controller.signal });
       clearTimeout(timeoutId);
@@ -100,9 +112,9 @@ function App() {
 
   useEffect(() => {
     if (hasMore && !error) {
-      fetchArtworks(page, debouncedSearch);
+      fetchArtworks(page, debouncedSearch, filterType);
     }
-  }, [page, debouncedSearch, fetchArtworks, hasMore, error]);
+  }, [page, debouncedSearch, filterType, fetchArtworks, hasMore, error]);
 
   // Infinite Scroll Observer
   useEffect(() => {
@@ -135,8 +147,13 @@ function App() {
 
   return (
     <div className="app">
-      <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <main style={{ paddingTop: '140px', minHeight: '100vh' }}>
+      <Header
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterType={filterType}
+        setFilterType={setFilterType}
+      />
+      <main className="main-content">
         {/* Only show grid if we have images OR if we are not in a loading/error state (to show 'empty' message) */}
         {(images.length > 0 || (!loading && !error)) && (
           <ImageGrid
@@ -152,7 +169,7 @@ function App() {
             <div style={{ padding: '20px' }}>
               <p style={{ color: '#ff6b6b', marginBottom: '10px' }}>{error}</p>
               <button
-                onClick={() => fetchArtworks(page, debouncedSearch)}
+                onClick={() => fetchArtworks(page, debouncedSearch, filterType)}
                 style={{
                   padding: '8px 16px',
                   background: 'rgba(255,255,255,0.1)',
@@ -177,6 +194,7 @@ function App() {
           onClose={() => setSelectedImage(null)}
         />
       )}
+      <ScrollToTop />
     </div>
   );
 }

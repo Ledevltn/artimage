@@ -23,16 +23,23 @@
 
 .search-wrapper {
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
+    /* Increased slightly for two controls */
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 12px;
+    /* Space between search and filter */
     pointer-events: auto;
-    /* Re-enable clicks on the search bar */
+    flex-wrap: wrap;
+    /* Stack on very small screens */
 }
 
 .search-container {
     position: relative;
-    width: 100%;
+    flex: 1;
+    /* Take up remaining space */
+    min-width: 200px;
 }
 
 .search-icon {
@@ -72,4 +79,63 @@
 
 .search-input:focus+.search-icon {
     color: var(--text-primary);
+}
+
+/* Filter Styles */
+.filter-container {
+    position: relative;
+}
+
+.filter-select {
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 16px 20px 16px 48px;
+    /* Room for icon */
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    color: var(--text-primary);
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 140px;
+}
+
+.filter-select:hover,
+.filter-select:focus {
+    background: rgba(50, 50, 50, 0.6);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.filter-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Dropdown arrow customisation is tricky cross-browser without SVG mask, 
+   but since it's glassmorphism we can rely on standard behavior or hide it. 
+   Let's keep it simple or add an arrow if needed. 
+   For now, standard arrow usually appears on right in some browsers, 
+   or we can hide it. */
+
+@media (max-width: 600px) {
+    .search-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-container,
+    .filter-container,
+    .filter-select {
+        width: 100%;
+    }
 }
