@@ -3,6 +3,7 @@ import Header from './components/Header';
 import ImageGrid from './components/ImageGrid';
 import Lightbox from './components/Lightbox';
 import ScrollToTop from './components/ScrollToTop';
+import SkeletonGrid from './components/SkeletonGrid';
 
 // Cleveland Museum of Art API
 const API_BASE_URL = "https://openaccess-api.clevelandart.org/api/artworks/";
@@ -154,17 +155,21 @@ function App() {
         setFilterType={setFilterType}
       />
       <main className="main-content">
-        {/* Only show grid if we have images OR if we are not in a loading/error state (to show 'empty' message) */}
-        {(images.length > 0 || (!loading && !error)) && (
+        {/* Show SkeletonGrid when loading initially (no images yet) */}
+        {loading && images.length === 0 && <SkeletonGrid />}
+
+        {/* Show ImageGrid when we have images */}
+        {images.length > 0 && (
           <ImageGrid
             images={images}
             onImageClick={handleImageClick}
           />
         )}
 
-        {/* Loading / Sentinel */}
+        {/* Loading Sentinel / Error / End message */}
         <div ref={observerTarget} style={{ height: '100px', margin: '20px 0', textAlign: 'center', color: '#666' }}>
-          {loading && <p>Loading masterpiece collection...</p>}
+          {/* Only show text loader if we already have images (paging) */}
+          {loading && images.length > 0 && <p>Loading more...</p>}
           {error && (
             <div style={{ padding: '20px' }}>
               <p style={{ color: '#ff6b6b', marginBottom: '10px' }}>{error}</p>
