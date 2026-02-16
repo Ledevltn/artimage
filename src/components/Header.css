@@ -138,37 +138,54 @@
     .filter-select {
         width: 100%;
     }
-}/* Existing Header CSS... */
+}
+
+/* Existing Header CSS... */
 
 .app-header {
     /* Ensure header layout handles new item */
 }
 
 .coffee-link {
+    position: absolute;
+    right: 30px;
+    top: 38px;
+    /* Aligns with input visually (30px padding + half height approx) */
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.7);
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
     transition: all 0.3s ease;
-    margin-left: 15px;
-    padding: 8px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05); /* Subtle background */
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: auto;
+    /* Essential since header has pointer-events: none */
 }
 
 .coffee-link:hover {
-    color: #FFDD00; /* Coffee yellow/gold */
+    color: #FFDD00;
     background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(255, 221, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 221, 0, 0.2);
+    transform: translateY(-2px);
+    border-color: rgba(255, 221, 0, 0.3);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
+    .coffee-link span {
+        display: none;
+        /* Hide text on smaller screens */
+    }
+
     .coffee-link {
-        margin-left: 10px;
-        padding: 6px;
+        padding: 10px;
+        right: 20px;
+        border-radius: 50%;
     }
 }
