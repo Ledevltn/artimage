@@ -144,8 +144,8 @@
 
 .coffee-link {
     position: absolute;
-    left: 40px;
-    /* Aligns with grid padding-left */
+    right: 40px;
+    /* Aligns with grid padding-right */
     top: 50px;
     /* Adjusted to align better without padding */
     color: rgba(255, 255, 255, 0.5);
@@ -164,7 +164,7 @@
 
 @media (max-width: 600px) {
     .coffee-link {
-        left: 20px;
+        right: 20px;
         /* Match mobile grid padding */
         top: 20px;
         font-size: 0.8rem;
