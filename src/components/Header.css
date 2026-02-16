@@ -140,11 +140,7 @@
     }
 }
 
-/* Existing Header CSS... */
 
-.app-header {
-    /* Ensure header layout handles new item */
-}
 
 .coffee-link {
     position: absolute;
@@ -162,8 +158,8 @@
     padding: 8px 16px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     pointer-events: auto;
     /* Essential since header has pointer-events: none */
@@ -177,7 +173,7 @@
     border-color: rgba(255, 221, 0, 0.3);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 600px) {
     .coffee-link span {
         display: none;
         /* Hide text on smaller screens */
