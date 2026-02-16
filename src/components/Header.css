@@ -149,13 +149,14 @@
     /* Aligns with input visually (30px padding + half height approx) */
     display: flex;
     align-items: center;
-    gap: 10px;
+    /* gap: 10px; Removed since no icon */
     color: rgba(255, 255, 255, 0.6);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
     transition: all 0.3s ease;
-    padding: 8px 16px;
+    padding: 10px 20px;
+    /* Slightly larger padding for button feel */
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.05);
     -webkit-backdrop-filter: blur(10px);

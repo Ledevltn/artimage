@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, Coffee } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import './Header.css';
 
 const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType }) => {
@@ -45,9 +45,9 @@ const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType }) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="coffee-link"
-                    title="Buy me a coffee"
+                    title="Soutenir le projet"
                 >
-                    <Coffee size={20} />
+                    <span>Soutenir le projet</span>
                 </a>
             </div>
         </header>
