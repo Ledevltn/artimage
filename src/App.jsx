@@ -53,7 +53,7 @@ function App() {
     const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
     try {
-      const limit = 20; // Increased to 20 to ensure enough content
+      const limit = 15; // Reverted to 15 to fix "Failed to fetch"
       const skip = (pageNum - 1) * limit;
       const q = query.trim();
 
