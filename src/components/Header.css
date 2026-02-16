@@ -138,4 +138,37 @@
     .filter-select {
         width: 100%;
     }
+}/* Existing Header CSS... */
+
+.app-header {
+    /* Ensure header layout handles new item */
+}
+
+.coffee-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+    margin-left: 15px;
+    padding: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05); /* Subtle background */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.coffee-link:hover {
+    color: #FFDD00; /* Coffee yellow/gold */
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(255, 221, 0, 0.3);
+}
+
+@media (max-width: 600px) {
+    .coffee-link {
+        margin-left: 10px;
+        padding: 6px;
+    }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Coffee } from 'lucide-react';
 import './Header.css';
 
 const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType }) => {
@@ -39,6 +39,16 @@ const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType }) => {
                         ))}
                     </select>
                 </div>
+
+                <a
+                    href="https://buymeacoffee.com/ledevltn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="coffee-link"
+                    title="Buy me a coffee"
+                >
+                    <Coffee size={20} />
+                </a>
             </div>
         </header>
     );
