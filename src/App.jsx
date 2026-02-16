@@ -53,7 +53,7 @@ function App() {
     const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
     try {
-      const limit = 15; // Reduced from 30 for faster initial load
+      const limit = 20; // Increased to 20 to ensure enough content
       const skip = (pageNum - 1) * limit;
       const q = query.trim();
 
@@ -124,9 +124,9 @@ function App() {
           setPage(prev => prev + 1);
         }
       },
-      // rootMargin: '800px' triggers loading when 800px from bottom (approx 1-2 viewports)
-      // Reduced from 2500px to avoid aggressive over-fetching
-      { rootMargin: '800px', threshold: 0 }
+      // rootMargin: '1600px' triggers loading earlier (approx 2 viewports)
+      // Increased from 800px to prevent hitting bottom before load
+      { rootMargin: '1600px', threshold: 0 }
     );
 
     const currentTarget = observerTarget.current;
