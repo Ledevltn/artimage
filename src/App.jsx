@@ -53,7 +53,7 @@ function App() {
     const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
     try {
-      const limit = 30;
+      const limit = 15; // Reduced from 30 for faster initial load
       const skip = (pageNum - 1) * limit;
       const q = query.trim();
 
@@ -124,9 +124,9 @@ function App() {
           setPage(prev => prev + 1);
         }
       },
-      // rootMargin: '2500px' triggers the loading when the user is 2500px away from the bottom
-      // This is aggressive pre-fetching to ensure seamless flow.
-      { rootMargin: '2500px', threshold: 0 }
+      // rootMargin: '800px' triggers loading when 800px from bottom (approx 1-2 viewports)
+      // Reduced from 2500px to avoid aggressive over-fetching
+      { rootMargin: '800px', threshold: 0 }
     );
 
     const currentTarget = observerTarget.current;

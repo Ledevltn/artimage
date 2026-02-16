@@ -1,6 +1,37 @@
-
 import React, { useMemo, useState, useEffect } from 'react';
 import './ImageGrid.css';
+import SkeletonCard from './SkeletonCard';
+
+const ImageItem = ({ art, onClick, onImageError }) => {
+    const [loaded, setLoaded] = useState(false);
+
+    return (
+        <div className="grid-item scale-up" onClick={() => onClick(art)}>
+            <div className="image-card">
+                {!loaded && <SkeletonCard />}
+                <img
+                    src={art.url}
+                    alt={art.title}
+                    loading="lazy"
+                    className="art-image"
+                    style={{
+                        display: loaded ? 'block' : 'none',
+                        opacity: loaded ? 1 : 0
+                    }}
+                    onLoad={() => setLoaded(true)}
+                    onError={() => onImageError(art.id)}
+                />
+                <div className="art-info" style={{ display: loaded ? 'block' : 'none' }}>
+                    <h3 className="art-title">
+                        {art.title}
+                        {art.date && <span style={{ marginLeft: '10px', color: '#fff' }}>{art.date}</span>}
+                    </h3>
+                    <p className="art-artist">{art.artist}</p>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const ImageGrid = ({ images, onImageClick }) => {
     // Determine number of columns based on window width
@@ -79,28 +110,12 @@ const ImageGrid = ({ images, onImageClick }) => {
             {columns.map((col, colIndex) => (
                 <div key={colIndex} className="masonry-column">
                     {col.map((art) => (
-                        <div
+                        <ImageItem
                             key={art.id}
-                            className="grid-item scale-up"
-                            onClick={() => onImageClick(art)}
-                        >
-                            <div className="image-card">
-                                <img
-                                    src={art.url}
-                                    alt={art.title}
-                                    loading="lazy"
-                                    className="art-image"
-                                    onError={() => handleImageError(art.id)}
-                                />
-                                <div className="art-info">
-                                    <h3 className="art-title">
-                                        {art.title}
-                                        {art.date && <span style={{ marginLeft: '10px', color: '#fff' }}>{art.date}</span>}
-                                    </h3>
-                                    <p className="art-artist">{art.artist}</p>
-                                </div>
-                            </div>
-                        </div>
+                            art={art}
+                            onClick={onImageClick}
+                            onImageError={handleImageError}
+                        />
                     ))}
                 </div>
             ))}
