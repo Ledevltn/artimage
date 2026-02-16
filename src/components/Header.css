@@ -145,44 +145,27 @@
 .coffee-link {
     position: absolute;
     right: 30px;
-    top: 38px;
-    /* Aligns with input visually (30px padding + half height approx) */
-    display: flex;
-    align-items: center;
-    /* gap: 10px; Removed since no icon */
-    color: rgba(255, 255, 255, 0.6);
+    top: 50px;
+    /* Adjusted to align better without padding */
+    color: rgba(255, 255, 255, 0.5);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
     transition: all 0.3s ease;
-    padding: 10px 20px;
-    /* Slightly larger padding for button feel */
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.05);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     pointer-events: auto;
-    /* Essential since header has pointer-events: none */
 }
 
 .coffee-link:hover {
     color: #FFDD00;
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 4px 15px rgba(255, 221, 0, 0.2);
-    transform: translateY(-2px);
-    border-color: rgba(255, 221, 0, 0.3);
+    transform: translateY(-1px);
+    text-shadow: 0 0 10px rgba(255, 221, 0, 0.3);
 }
 
 @media (max-width: 600px) {
-    .coffee-link span {
-        display: none;
-        /* Hide text on smaller screens */
-    }
-
     .coffee-link {
-        padding: 10px;
         right: 20px;
-        border-radius: 50%;
+        top: 20px;
+        /* Move up on mobile to avoid stacking issues */
+        font-size: 0.8rem;
     }
 }
