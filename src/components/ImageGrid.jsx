@@ -4,24 +4,44 @@ import SkeletonCard from './SkeletonCard';
 
 const ImageItem = ({ art, onClick, onImageError }) => {
     const [loaded, setLoaded] = useState(false);
+    const aspectRatio = (art.height && art.width) ? (art.height / art.width) : 1;
 
     return (
         <div className="grid-item scale-up" onClick={() => onClick(art)}>
-            <div className="image-card">
-                {!loaded && <SkeletonCard />}
+            <div className="image-card" style={{ position: 'relative' }}>
+                {/* Spacer to maintain aspect ratio */}
+                <div style={{ paddingBottom: `${aspectRatio * 100}%`, width: '100%', position: 'relative' }}></div>
+
+                {/* Skeleton Loader (absolute, behind image) */}
+                {!loaded && (
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                        <SkeletonCard />
+                    </div>
+                )}
+
+                {/* Image (absolute, fades in) */}
                 <img
                     src={art.url}
                     alt={art.title}
                     loading="lazy"
                     className="art-image"
                     style={{
-                        display: loaded ? 'block' : 'none',
-                        opacity: loaded ? 1 : 0
+                        opacity: loaded ? 1 : 0,
+                        transition: 'opacity 0.5s ease',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
                     }}
                     onLoad={() => setLoaded(true)}
                     onError={() => onImageError(art.id)}
                 />
-                <div className="art-info" style={{ display: loaded ? 'block' : 'none' }}>
+
+                {/* Overlay Info (absolute) */}
+                <div className="art-info" style={{ opacity: loaded ? 1 : 0, transition: 'opacity 0.5s ease' }}>
                     <h3 className="art-title">
                         {art.title}
                         {art.date && <span style={{ marginLeft: '10px', color: '#fff' }}>{art.date}</span>}

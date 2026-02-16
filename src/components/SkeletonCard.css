@@ -1,10 +1,12 @@
 .skeleton-card {
-    break-inside: avoid;
-    margin-bottom: 20px;
+    width: 100%;
+    height: 100%;
     background: rgba(255, 255, 255, 0.05);
     /* Slightly visible container */
     border-radius: 8px;
     overflow: hidden;
+    position: relative;
+    /* Ensure children are relative to this */
 }
 
 .skeleton-image {

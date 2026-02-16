@@ -102,7 +102,7 @@ function App() {
         setError("Connection timed out. Please check your internet.");
       } else {
         console.error("Failed to fetch artworks", err);
-        setError("Unable to load artworks. Please reload.");
+        setError(`Unable to load artworks: ${err.message}`);
       }
     } finally {
       setLoading(false);
