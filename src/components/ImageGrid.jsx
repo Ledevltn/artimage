@@ -40,14 +40,7 @@ const ImageItem = ({ art, onClick, onImageError }) => {
                     onError={() => onImageError(art.id)}
                 />
 
-                {/* Overlay Info (absolute) */}
-                <div className="art-info" style={{ opacity: loaded ? 1 : 0, transition: 'opacity 0.5s ease' }}>
-                    <h3 className="art-title">
-                        {art.title}
-                        {art.date && <span style={{ marginLeft: '10px', color: '#fff' }}>{art.date}</span>}
-                    </h3>
-                    <p className="art-artist">{art.artist}</p>
-                </div>
+
             </div>
         </div>
     );
