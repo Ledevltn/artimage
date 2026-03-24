@@ -54,13 +54,31 @@ function App() {
       let newArtworks = [];
       let hasMoreData = true;
 
+      // Retry logic for unstable APIs
+      const fetchWithRetry = async (url, options, retries = 3) => {
+        for (let i = 0; i < retries; i++) {
+          try {
+            const res = await fetch(url, options);
+            if (res.ok) return res;
+            if (res.status >= 500 && i < retries - 1) {
+              await new Promise(r => setTimeout(r, 1000 * (i + 1))); // Exponential backoff
+              continue;
+            }
+            return res;
+          } catch (err) {
+            if (i === retries - 1 || err.name === 'AbortError') throw err;
+            await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+          }
+        }
+      };
+
       if (source === 'cleveland') {
         const q = query.trim();
         let url = `${API_BASE_URL}?has_image=1&limit=${limit}&skip=${skip}`;
         if (q) url += `&q=${encodeURIComponent(q)}`;
         if (type) url += `&type=${encodeURIComponent(type)}`;
 
-        const response = await fetch(url, { signal: controller.signal });
+        const response = await fetchWithRetry(url, { signal: controller.signal });
         if (!response.ok) throw new Error('Cleveland API Error');
         const data = await response.json();
 
@@ -89,7 +107,7 @@ function App() {
             url += `&q=${encodeURIComponent(finalQuery)}`;
         }
 
-        const response = await fetch(url, { signal: controller.signal });
+        const response = await fetchWithRetry(url, { signal: controller.signal });
         if (!response.ok) throw new Error('Chicago API Error');
         const data = await response.json();
 
