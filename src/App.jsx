@@ -12,7 +12,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filterType, setFilterType] = useState('');
-  const [artSource, setArtSource] = useState('cleveland');
+  const [artSource, setArtSource] = useState('chicago');
 
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);

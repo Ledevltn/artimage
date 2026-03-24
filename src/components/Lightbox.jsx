@@ -32,8 +32,8 @@ const Lightbox = ({ image, onClose }) => {
     if (!image) return null;
 
     return (
-        <div className="lightbox-overlay">
-            <div className="lightbox-controls">
+        <div className="lightbox-overlay" onClick={onClose}>
+            <div className="lightbox-controls" onClick={e => e.stopPropagation()}>
                 <button onClick={onClose} className="close-btn" aria-label="Close">
                     <X size={32} />
                 </button>
@@ -48,7 +48,7 @@ const Lightbox = ({ image, onClose }) => {
                 >
                     {({ zoomIn, zoomOut, resetTransform }) => (
                         <>
-                            <div className="zoom-controls">
+                            <div className="zoom-controls" onClick={e => e.stopPropagation()}>
                                 <button onClick={() => zoomIn()}><ZoomIn size={24} /></button>
                                 <button onClick={() => zoomOut()}><ZoomOut size={24} /></button>
                                 <button onClick={() => resetTransform()}><Maximize size={24} /></button>
@@ -58,6 +58,8 @@ const Lightbox = ({ image, onClose }) => {
                                     src={currentSrc}
                                     alt={image.title}
                                     className={`lightbox-image ${isHighResLoaded ? 'high-res' : 'low-res'}`}
+                                    onClick={e => e.stopPropagation()}
+                                    onDoubleClick={e => e.stopPropagation()}
                                 />
                             </TransformComponent>
                         </>
