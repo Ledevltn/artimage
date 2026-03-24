@@ -1,8 +1,8 @@
 import React from 'react';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Library } from 'lucide-react';
 import './Header.css';
 
-const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType }) => {
+const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType, artSource, setArtSource }) => {
     const filters = [
         { value: '', label: 'All Artworks' },
         { value: 'Painting', label: 'Paintings' },
@@ -37,6 +37,18 @@ const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType }) => {
                         {filters.map(f => (
                             <option key={f.value} value={f.value}>{f.label}</option>
                         ))}
+                    </select>
+                </div>
+                <div className="filter-container">
+                    <Library className="filter-icon" size={16} />
+                    <select
+                        value={artSource}
+                        onChange={(e) => setArtSource(e.target.value)}
+                        className="filter-select"
+                        aria-label="Select Source"
+                    >
+                        <option value="cleveland">Cleveland Museum (Classics)</option>
+                        <option value="chicago">Art Institute of Chicago (Contemporary)</option>
                     </select>
                 </div>
 

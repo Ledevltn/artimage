@@ -12,6 +12,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filterType, setFilterType] = useState('');
+  const [artSource, setArtSource] = useState('cleveland');
 
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
@@ -32,21 +33,15 @@ function App() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Reset and Refetch when search OR filter changes
   useEffect(() => {
     setPage(1);
     setImages([]);
     setHasMore(true);
     setError(null);
-    // The actual fetch will be triggered by variable change in the main fetch effect
-    // or we could call fetch directly here?
-    // Better pattern: dependency on query/filter in a separate "reset" effect?
-    // Actually, simplest is:
-    // When debouncedSearch or filterType changes, we reset images and set page to 1.
-  }, [debouncedSearch, filterType]);
+  }, [debouncedSearch, filterType, artSource]);
 
   // Fetch Logic
-  const fetchArtworks = useCallback(async (pageNum, query, type) => {
+  const fetchArtworks = useCallback(async (pageNum, query, type, source) => {
     setLoading(true);
     setError(null);
 
@@ -54,48 +49,82 @@ function App() {
     const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
     try {
-      const limit = 15; // Reverted to 15 to fix "Failed to fetch"
+      const limit = 15;
       const skip = (pageNum - 1) * limit;
-      const q = query.trim();
+      let newArtworks = [];
+      let hasMoreData = true;
 
-      let url = `${API_BASE_URL}?has_image=1&limit=${limit}&skip=${skip}`;
-      if (q) url += `&q=${encodeURIComponent(q)}`;
-      if (type) url += `&type=${encodeURIComponent(type)}`;
+      if (source === 'cleveland') {
+        const q = query.trim();
+        let url = `${API_BASE_URL}?has_image=1&limit=${limit}&skip=${skip}`;
+        if (q) url += `&q=${encodeURIComponent(q)}`;
+        if (type) url += `&type=${encodeURIComponent(type)}`;
 
-      const response = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeoutId);
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error('Cleveland API Error');
+        const data = await response.json();
 
-      if (!response.ok) throw new Error('API Error');
-
-      const data = await response.json();
-
-      if (data && data.data) {
-        const newArtworks = data.data
-          .filter(item => item.images && item.images.web)
-          .map(item => ({
-            id: item.id,
-            title: item.title,
-            artist: item.creators && item.creators.length > 0 ? item.creators[0].description : "Unknown Artist",
-            date: item.creation_date || item.date_text || "",
-            url: item.images.web.url,
-            // Capture dimensions for masonry layout
-            width: item.images.web.width ? parseInt(item.images.web.width) : 100,
-            height: item.images.web.height ? parseInt(item.images.web.height) : 100,
-            fullUrl: item.images.print ? item.images.print.url : item.images.web.url
-          }));
-
-        if (newArtworks.length === 0) {
-          setHasMore(false);
+        if (data && data.data && data.data.length > 0) {
+          newArtworks = data.data
+            .filter(item => item.images && item.images.web)
+            .map(item => ({
+              id: `cleveland-${item.id}`,
+              title: item.title,
+              artist: item.creators && item.creators.length > 0 ? item.creators[0].description : "Unknown Artist",
+              date: item.creation_date || item.date_text || "",
+              url: item.images.web.url,
+              width: item.images.web.width ? parseInt(item.images.web.width) : 100,
+              height: item.images.web.height ? parseInt(item.images.web.height) : 100,
+              fullUrl: item.images.print ? item.images.print.url : item.images.web.url
+            }));
         } else {
-          setImages(prev => {
-            // Deduplicate to avoid key clashes
-            const existingIds = new Set(prev.map(p => p.id));
-            const uniqueNew = newArtworks.filter(a => !existingIds.has(a.id));
-            return pageNum === 1 ? newArtworks : [...prev, ...uniqueNew];
-          });
+          hasMoreData = false;
         }
-      } else {
+      } else if (source === 'chicago') {
+        const q = query.trim();
+        let url = `https://api.artic.edu/api/v1/artworks/search?query[term][is_public_domain]=true&limit=${limit}&page=${pageNum}&fields=id,title,artist_display,date_display,image_id`;
+        
+        const finalQuery = [q, type].filter(Boolean).join(" ");
+        if (finalQuery) {
+            url += `&q=${encodeURIComponent(finalQuery)}`;
+        }
+
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error('Chicago API Error');
+        const data = await response.json();
+
+        if (data && data.data && data.data.length > 0) {
+          const validItems = data.data.filter(item => item.image_id);
+          newArtworks = validItems.map(item => {
+            const imageUrl = `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`;
+            return {
+              id: `chicago-${item.id}`,
+              title: item.title,
+              artist: item.artist_display || "Unknown Artist",
+              date: item.date_display || "",
+              url: imageUrl,
+              width: 1, // Fallback ratio for masonry grid
+              height: 1,
+              fullUrl: imageUrl
+            };
+          });
+          
+          if (data.pagination && data.pagination.current_page >= data.pagination.total_pages) {
+              hasMoreData = false;
+          }
+        } else {
+          hasMoreData = false;
+        }
+      }
+
+      if (newArtworks.length === 0 && !hasMoreData) {
         setHasMore(false);
+      } else {
+        setImages(prev => {
+          const existingIds = new Set(prev.map(p => p.id));
+          const uniqueNew = newArtworks.filter(a => !existingIds.has(a.id));
+          return pageNum === 1 ? uniqueNew : [...prev, ...uniqueNew];
+        });
       }
     } catch (err) {
       if (err.name === 'AbortError') {
@@ -113,9 +142,9 @@ function App() {
 
   useEffect(() => {
     if (hasMore && !error) {
-      fetchArtworks(page, debouncedSearch, filterType);
+      fetchArtworks(page, debouncedSearch, filterType, artSource);
     }
-  }, [page, debouncedSearch, filterType, fetchArtworks, hasMore, error]);
+  }, [page, debouncedSearch, filterType, artSource, fetchArtworks, hasMore, error]);
 
   // Infinite Scroll Observer
   useEffect(() => {
@@ -153,6 +182,8 @@ function App() {
         setSearchTerm={setSearchTerm}
         filterType={filterType}
         setFilterType={setFilterType}
+        artSource={artSource}
+        setArtSource={setArtSource}
       />
       <main className="main-content">
         {/* Show SkeletonGrid when loading initially (no images yet) */}
@@ -174,7 +205,7 @@ function App() {
             <div style={{ padding: '20px' }}>
               <p style={{ color: '#ff6b6b', marginBottom: '10px' }}>{error}</p>
               <button
-                onClick={() => fetchArtworks(page, debouncedSearch, filterType)}
+                onClick={() => fetchArtworks(page, debouncedSearch, filterType, artSource)}
                 style={{
                   padding: '8px 16px',
                   background: 'rgba(255,255,255,0.1)',
