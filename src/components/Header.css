@@ -140,7 +140,49 @@
     }
 }
 
+/* Custom Source Selector (Top Left) */
+.source-container {
+    position: absolute;
+    left: 40px; /* Match grid left padding */
+    top: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+}
 
+.source-icon {
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.3s ease;
+}
+
+.source-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.source-select:hover, .source-select:focus {
+    color: #FFDD00;
+    text-shadow: 0 0 10px rgba(255, 221, 0, 0.3);
+    outline: none;
+}
+
+.source-select:hover ~ .source-icon, .source-container:hover .source-icon {
+    color: #FFDD00;
+}
+
+.source-select option {
+    background: #1a1a1a;
+    color: white;
+}
 
 .coffee-link {
     position: absolute;
@@ -168,5 +210,17 @@
         /* Match mobile grid padding */
         top: 20px;
         font-size: 0.8rem;
+    }
+
+    .source-container {
+        left: 20px;
+        top: 20px;
+    }
+    .source-select {
+        font-size: 0.8rem;
+    }
+    .source-icon {
+        width: 14px;
+        height: 14px;
     }
 }

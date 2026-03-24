@@ -15,6 +15,20 @@ const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType, artSourc
 
     return (
         <header className="app-header">
+            {/* Top Left: Source Selector */}
+            <div className="source-container">
+                <Library className="source-icon" size={16} />
+                <select
+                    value={artSource}
+                    onChange={(e) => setArtSource(e.target.value)}
+                    className="source-select"
+                    aria-label="Select Source"
+                >
+                    <option value="cleveland">Cleveland Museum</option>
+                    <option value="chicago">Art Institute of Chicago</option>
+                </select>
+            </div>
+
             <div className="search-wrapper">
                 <div className="search-container">
                     <Search className="search-icon" size={20} />
@@ -37,18 +51,6 @@ const Header = ({ searchTerm, setSearchTerm, filterType, setFilterType, artSourc
                         {filters.map(f => (
                             <option key={f.value} value={f.value}>{f.label}</option>
                         ))}
-                    </select>
-                </div>
-                <div className="filter-container">
-                    <Library className="filter-icon" size={16} />
-                    <select
-                        value={artSource}
-                        onChange={(e) => setArtSource(e.target.value)}
-                        className="filter-select"
-                        aria-label="Select Source"
-                    >
-                        <option value="cleveland">Cleveland Museum (Classics)</option>
-                        <option value="chicago">Art Institute of Chicago (Contemporary)</option>
                     </select>
                 </div>
 
